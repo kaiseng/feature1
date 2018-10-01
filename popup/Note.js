@@ -1,31 +1,25 @@
-/* initialise variables */
+/* Declare Variables */
+var Title = document.querySelector('.new-note input');
+var Body = document.querySelector('.new-note textarea');
+var NoteContainer = document.querySelector('.note-container');
+var ClearButton = document.querySelector('.clear');
+var AddButton = document.querySelector('.add');
 
-var inputTitle = document.querySelector('.new-note input');
-var inputBody = document.querySelector('.new-note textarea');
+/*  Add Event Listeners to the Add and Clear buttons */
+AddButton.addEventListener('click', addNote);
+ClearButton.addEventListener('click', clearAll);
 
-var noteContainer = document.querySelector('.note-container');
-
-
-var clearBtn = document.querySelector('.clear');
-var addBtn = document.querySelector('.add');
-
-/*  add event listeners to buttons */
-
-addBtn.addEventListener('click', addNote);
-clearBtn.addEventListener('click', clearAll);
-
-/* generic error handler */
+/* Generic the Error Handler */
 function onError(error) {
   console.log(error);
 }
 
-/* display previously-saved stored notes on startup */
-
+/* Display the Stored Notes that are Previously-Saved on Startup */
 initialize();
 
 function initialize() {
-  var gettingAllStorageItems = browser.storage.local.get(null);
-  gettingAllStorageItems.then((results) => {
+  var getAllStorageItems = browser.storage.local.get(null);
+  getAllStorageItems.then((results) => {
     var noteKeys = Object.keys(results);
     for (let noteKey of noteKeys) {
       var curValue = results[noteKey];
@@ -34,24 +28,23 @@ function initialize() {
   }, onError);
 }
 
-/* Add a note to the display, and storage */
+/* Add a Note to the Display and Storage */
 
 function addNote() {
-  var noteTitle = inputTitle.value;
-  var noteBody = inputBody.value;
+  var noteTitle = Title.value;
+  var noteBody = Body.value;
   var gettingItem = browser.storage.local.get(noteTitle);
   gettingItem.then((result) => {
     var objTest = Object.keys(result);
     if(objTest.length < 1 && noteTitle !== '' && noteBody !== '') {
-      inputTitle.value = '';
-      inputBody.value = '';
+      Title.value = '';
+      Body.value = '';
       storeNote(noteTitle,noteBody);
     }
   }, onError);
 }
 
-/* function to store a new note in storage */
-
+/* Function to Store a New Note in Storage */
 function storeNote(title, body) {
   var storingNote = browser.storage.local.set({ [title] : body });
   storingNote.then(() => {
@@ -59,71 +52,69 @@ function storeNote(title, body) {
   }, onError);
 }
 
-/* function to display a note in the note box */
-
+/* Function to Display a Note in the Note Box */
 function displayNote(title, body) {
 
-  /* create note display box */
+  /* Create the Note Display Box */
   var note = document.createElement('div');
   var noteDisplay = document.createElement('div');
   var noteH = document.createElement('h2');
   var notePara = document.createElement('p');
-  var deleteBtn = document.createElement('button');
+  var DeleteButton = document.createElement('button');
   var clearFix = document.createElement('div');
 
   note.setAttribute('class','note');
 
   noteH.textContent = title;
   notePara.textContent = body;
-  deleteBtn.setAttribute('class','delete');
-  deleteBtn.textContent = 'Delete note';
+  DeleteButton.setAttribute('class','delete');
+  DeleteButton.textContent = 'Delete Note';
   clearFix.setAttribute('class','clearfix');
 
   noteDisplay.appendChild(noteH);
   noteDisplay.appendChild(notePara);
-  noteDisplay.appendChild(deleteBtn);
+  noteDisplay.appendChild(DeleteButton);
   noteDisplay.appendChild(clearFix);
 
   note.appendChild(noteDisplay);
 
-  /* set up listener for the delete functionality */
-
-  deleteBtn.addEventListener('click',(e) => {
-    const evtTgt = e.target;
-    evtTgt.parentNode.parentNode.parentNode.removeChild(evtTgt.parentNode.parentNode);
+  /* Set Up Listener for the Feature of Delete Note */
+  DeleteButton.addEventListener('click',(e) => {
+    const EventTarget = e.target;
+    EventTarget.parentNode.parentNode.parentNode.removeChild(EventTarget.parentNode.parentNode);
     browser.storage.local.remove(title);
   })
 
-  /* create note edit box */
+  /* Create the Note Edit box */
   var noteEdit = document.createElement('div');
   var noteTitleEdit = document.createElement('input');
   var noteBodyEdit = document.createElement('textarea');
   var clearFix2 = document.createElement('div');
 
-  var updateBtn = document.createElement('button');
-  var cancelBtn = document.createElement('button');
+  var UpdateButton = document.createElement('button');
+  var CancelButton = document.createElement('button');
 
-  updateBtn.setAttribute('class','update');
-  updateBtn.textContent = 'Update note';
-  cancelBtn.setAttribute('class','cancel');
-  cancelBtn.textContent = 'Cancel update';
+  UpdateButton.setAttribute('class','update');
+  UpdateButton.textContent = 'Update Note';
+  CancelButton.setAttribute('class','cancel');
+  CancelButton.textContent = 'Cancel Update';
 
   noteEdit.appendChild(noteTitleEdit);
   noteTitleEdit.value = title;
   noteEdit.appendChild(noteBodyEdit);
   noteBodyEdit.textContent = body;
-  noteEdit.appendChild(updateBtn);
-  noteEdit.appendChild(cancelBtn);
+  noteEdit.appendChild(UpdateButton);
+  noteEdit.appendChild(CancelButton);
 
   noteEdit.appendChild(clearFix2);
   clearFix2.setAttribute('class','clearfix');
 
   note.appendChild(noteEdit);
 
-  noteContainer.appendChild(note);
+  NoteContainer.appendChild(note);
   noteEdit.style.display = 'none';
 
-  /* set up listeners for the update functionality */
+  /* Set Up Listeners for the Feature of Update */
 
   noteH.addEventListener('click',() => {
     noteDisplay.style.display = 'none';
@@ -135,14 +126,14 @@ function displayNote(title, body) {
     noteEdit.style.display = 'block';
   }) 
 
-  cancelBtn.addEventListener('click',() => {
+  CancelButton.addEventListener('click',() => {
     noteDisplay.style.display = 'block';
     noteEdit.style.display = 'none';
     noteTitleEdit.value = title;
     noteBodyEdit.value = body;
   })
 
-  updateBtn.addEventListener('click',() => {
+  UpdateButton.addEventListener('click',() => {
     if(noteTitleEdit.value !== title || noteBodyEdit.value !== body) {
       updateNote(title,noteTitleEdit.value,noteBodyEdit.value);
       note.parentNode.removeChild(note);
@@ -150,9 +141,7 @@ function displayNote(title, body) {
   });
 }
 
-
-/* function to update notes */
-
+/* Function to Update Notes */
 function updateNote(delNote,newTitle,newBody) {
   var storingNote = browser.storage.local.set({ [newTitle] : newBody });
   storingNote.then(() => {
@@ -167,11 +156,12 @@ function updateNote(delNote,newTitle,newBody) {
   }, onError);
 }
 
-/* Clear all notes from the display/storage */
-
+/* Clear all the Notes from the Storage/Display */
 function clearAll() {
-  while (noteContainer.firstChild) {
-      noteContainer.removeChild(noteContainer.firstChild);
+  while (NoteContainer.firstChild) {
+      NoteContainer.removeChild(NoteContainer.firstChild);
   }
   browser.storage.local.clear();
 }
+
+
