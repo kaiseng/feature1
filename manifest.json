@@ -1,30 +1,26 @@
 {
-
+  
   "manifest_version": 2,
-  "name": "Quicknote",
-  "version": "1.1",
+  "name": "Short Note",
+  "version": "1.0",
 
-  "description": "Allows the user to make quick notes by clicking a button and entering text into the resulting popup. The notes are saved in storage. See https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Examples#quicknote",
+  "description": "Allows the user to make notes by clicking the notes button on the top right side and the notes will be saved into storage, at the same time, the user can search for the weather.",
   "icons": {
-    "48": "icons/quicknote-48.png"
+    "21": "icons/21.png"
   },
 
   "permissions": [
-    "storage"
+    "storage", 
+    "activeTab"
   ],
 
   "browser_action": {
     "default_icon": {
-     "32" : "icons/quicknote-32.png"
+     "21" : "icons/21.png"
     },
-    "default_title": "Quicknote",
-    "default_popup": "popup/quicknote.html"
-  },
-
-  "applications": {
-    "gecko": {
-      "id": "quicknote-example@mozilla.org"
-    }
+    "default_title": "Short Note",
+    "default_popup": "popup/Note.html"
+    
   }
-
+  
 }
